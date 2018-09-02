@@ -140,7 +140,7 @@ public class NewInstallUserRunner extends TransformerBaseRunner {
             // 2.获取昨天的原始数据,存储格式为:platformid = totalusers
             Map<String, Integer> oldValueMap = new HashMap<String, Integer>();
 
-            // 开始更新stats_user
+            // 开始更新stats_user===================================
             if (yesterdayDimensionId > -1) {
                 pstmt = conn.prepareStatement("select `platform_dimension_id`,`total_install_users` from `stats_user` where `date_dimension_id`=?");
                 pstmt.setInt(1, yesterdayDimensionId);
@@ -175,7 +175,7 @@ public class NewInstallUserRunner extends TransformerBaseRunner {
                 pstmt.execute();
             }
 
-            // 开始更新stats_device_browser
+            // 开始更新stats_device_browser===================================
             oldValueMap.clear();
             if (yesterdayDimensionId > -1) {
                 pstmt = conn.prepareStatement("select `platform_dimension_id`,`browser_dimension_id`,`total_install_users` from `stats_device_browser` where `date_dimension_id`=?");

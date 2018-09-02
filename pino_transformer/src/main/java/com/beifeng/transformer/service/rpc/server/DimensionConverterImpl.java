@@ -33,7 +33,7 @@ import com.mysql.jdbc.Statement;
 public class DimensionConverterImpl implements IDimensionConverter {
     private static final Logger logger = Logger.getLogger(DimensionConverterImpl.class);
     private static final String DRIVER = "com.mysql.jdbc.Driver";
-    private static final String URL = "jdbc:mysql://hh:3306/report";
+    private static final String URL = "jdbc:mysql://192.168.4.1:3306/report";
     private static final String USERNAME = "hive";
     private static final String PASSWORD = "hive";
     private Map<String, Integer> cache = new LinkedHashMap<String, Integer>() {
@@ -164,7 +164,7 @@ public class DimensionConverterImpl implements IDimensionConverter {
     }
 
     /**
-     * 设置参数
+     * 设置PreparedStatement 的参数
      * 
      * @param pstmt
      * @param dimension

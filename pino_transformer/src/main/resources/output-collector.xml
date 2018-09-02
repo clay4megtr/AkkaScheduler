@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<!-- 指定每个指标对应的 outputformat 对应的类名，到时候通过反射的方式去获取 -->
 <configuration>
 	<property>
 		<name>collector_new_install_user</name>

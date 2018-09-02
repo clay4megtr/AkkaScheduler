@@ -30,7 +30,7 @@ public class GlobalConstants {
     public static final String OUTPUT_COLLECTOR_KEY_PREFIX = "collector_";
 
     /**
-     * 指定连接表配置为report
+     * 指定连接表配置为report，也就是说%s 对应的就是  report
      */
     public static final String WAREHOUSE_OF_REPORT = "report";
 

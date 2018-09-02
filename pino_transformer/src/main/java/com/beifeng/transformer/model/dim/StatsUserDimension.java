@@ -8,12 +8,16 @@ import com.beifeng.transformer.model.dim.base.BaseDimension;
 import com.beifeng.transformer.model.dim.base.BrowserDimension;
 
 /**
+ * 也就是说外层的 dimension 就是定义的组合维度，比如用户分析：用户基本分析和浏览器分析
+ *
  * 进行用户分析(用户基本分析和浏览器分析)定义的组合维度
  * 
  * @author gerry
  *
  */
 public class StatsUserDimension extends StatsDimension {
+
+    //总共三个维度，时间，平台，浏览器
     private StatsCommonDimension statsCommon = new StatsCommonDimension();
     private BrowserDimension browser = new BrowserDimension();
 

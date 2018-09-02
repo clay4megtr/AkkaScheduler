@@ -100,12 +100,12 @@ public class TransformerOutputFormat extends OutputFormat<BaseDimension, BaseSta
                 }
                 batch.put(kpi, count); // 批量次数的存储
 
-                String collectorName = conf.get(GlobalConstants.OUTPUT_COLLECTOR_KEY_PREFIX + kpi.name);
+                String collectorName = conf.get(GlobalConstants.OUTPUT_COLLECTOR_KEY_PREFIX + kpi.name);  //collector_new_install_user  类名？
                 Class<?> clazz = Class.forName(collectorName);
                 IOutputCollector collector = (IOutputCollector) clazz.newInstance();
                 collector.collect(conf, key, value, pstmt, converter);
 
-                if (count % Integer.valueOf(conf.get(GlobalConstants.JDBC_BATCH_NUMBER, GlobalConstants.DEFAULT_JDBC_BATCH_NUMBER)) == 0) {
+                if (count % Integer.valueOf(conf.get(GlobalConstants.JDBC_BATCH_NUMBER, GlobalConstants.DEFAULT_JDBC_BATCH_NUMBER)) == 0) { //到达阈值（500）之后才写
                     pstmt.executeBatch();
                     conn.commit();
                     batch.remove(kpi); // 对应批量计算删除
@@ -119,7 +119,7 @@ public class TransformerOutputFormat extends OutputFormat<BaseDimension, BaseSta
         @Override
         public void close(TaskAttemptContext context) throws IOException, InterruptedException {
             try {
-                for (Map.Entry<KpiType, PreparedStatement> entry : this.map.entrySet()) {
+                for (Map.Entry<KpiType, PreparedStatement> entry : this.map.entrySet()) {   //剩下的不够阈值的再写入
                     entry.getValue().executeBatch();
                 }
             } catch (SQLException e) {

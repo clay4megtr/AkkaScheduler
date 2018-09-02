@@ -10,7 +10,9 @@ import com.beifeng.transformer.model.dim.base.KpiDimension;
 import com.beifeng.transformer.model.dim.base.PlatformDimension;
 
 /**
- * 公用的dimension信息组合
+ * 这些dimension，也就是所谓的维度，最终都是继承的WritableComparable，也就是说，最终都是会写出去的，指标而已
+ *
+ * 公用的dimension信息组合， 是七个模块都有的维度，
  * 
  * @author gerry
  *
