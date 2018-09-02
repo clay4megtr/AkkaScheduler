@@ -19,14 +19,14 @@ import com.beifeng.etl.util.LoggerUtil;
 /**
  * 自定义数据解析map类
  * 
- * @author gerry
+ * @author pino
  *
  */
 public class AnalyserLogDataMapper extends Mapper<Object, Text, NullWritable, Put> {
     private final Logger logger = Logger.getLogger(AnalyserLogDataMapper.class);
     private int inputRecords, filterRecords, outputRecords; // 主要用于标志，方便查看过滤数据
     private byte[] family = Bytes.toBytes(EventLogConstants.EVENT_LOGS_FAMILY_NAME);
-    private CRC32 crc32 = new CRC32();
+    private CRC32 crc32 = new CRC32();  //一种压缩格式，压缩hbase 的rowkey 用的，
 
     @Override
     protected void map(Object key, Text value, Context context) throws IOException, InterruptedException {
@@ -87,7 +87,7 @@ public class AnalyserLogDataMapper extends Mapper<Object, Text, NullWritable, Pu
         String serverTime = clientInfo.get(EventLogConstants.LOG_COLUMN_NAME_SERVER_TIME);
         if (StringUtils.isNotBlank(serverTime)) {
             // 要求服务器时间不为空
-            clientInfo.remove(EventLogConstants.LOG_COLUMN_NAME_USER_AGENT); // 浏览器信息去掉
+            clientInfo.remove(EventLogConstants.LOG_COLUMN_NAME_USER_AGENT); // 浏览器信息去掉，因为已经解析过了，
             String rowkey = this.generateRowKey(uuid, memberId, event.alias, serverTime); // timestamp
                                                                                           // +
                                                                                           // (uuid+memberid+event).crc
@@ -97,7 +97,7 @@ public class AnalyserLogDataMapper extends Mapper<Object, Text, NullWritable, Pu
                     put.add(family, Bytes.toBytes(entry.getKey()), Bytes.toBytes(entry.getValue()));
                 }
             }
-            context.write(NullWritable.get(), put);
+            context.write(NullWritable.get(), put);// 把写 hbase 时用的put 对象作为value 传出去，
             this.outputRecords++;
         } else {
             this.filterRecords++;
@@ -105,6 +105,8 @@ public class AnalyserLogDataMapper extends Mapper<Object, Text, NullWritable, Pu
     }
 
     /**
+     * timestamp_(uuid+memberid+event).crc    timestamp  实际上是serverTime（服务器时间），是nginx在打印日志时，添加上的，也就是日志的产生时间
+     *
      * 根据uuid memberid servertime创建rowkey
      * 
      * @param uuid

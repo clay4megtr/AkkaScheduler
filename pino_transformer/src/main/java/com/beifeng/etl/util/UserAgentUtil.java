@@ -52,7 +52,7 @@ public class UserAgentUtil {
 	/**
 	 * 内部解析后的浏览器信息model对象
 	 * 
-	 * @author gerry
+	 * @author pino
 	 *
 	 */
 	public static class UserAgentInfo {

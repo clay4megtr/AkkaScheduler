@@ -1,7 +1,9 @@
 package com.beifeng.etl.mr.ald;
 
+import java.io.File;
 import java.io.IOException;
 
+import com.beifeng.util.EJob;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -10,6 +12,7 @@ import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
 import org.apache.hadoop.io.NullWritable;
+import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.util.Tool;
@@ -23,7 +26,7 @@ import com.beifeng.util.TimeUtil;
 /**
  * 编写mapreduce的runner类
  * 
- * @author gerry
+ * @author pino
  *
  */
 public class AnalyserLogDataRunner implements Tool {
@@ -49,6 +52,7 @@ public class AnalyserLogDataRunner implements Tool {
         return this.conf;
     }
 
+    //真正执行的方法
     @Override
     public int run(String[] args) throws Exception {
         Configuration conf = this.getConf();
@@ -57,8 +61,8 @@ public class AnalyserLogDataRunner implements Tool {
         Job job = Job.getInstance(conf, "analyser_logdata");
 
         // 设置本地提交job，集群运行，需要代码
-        // File jarFile = EJob.createTempJar("target/classes");
-        // ((JobConf) job.getConfiguration()).setJar(jarFile.toString());
+         File jarFile = EJob.createTempJar("target/classes");
+         ((JobConf) job.getConfiguration()).setJar(jarFile.toString());
         // 设置本地提交job，集群运行，需要代码结束
 
         job.setJarByClass(AnalyserLogDataRunner.class);
@@ -67,9 +71,10 @@ public class AnalyserLogDataRunner implements Tool {
         job.setMapOutputValueClass(Put.class);
         // 设置reducer配置
         // 1. 集群上运行，打成jar运行(要求addDependencyJars参数为true，默认就是true)
-        // TableMapReduceUtil.initTableReducerJob(EventLogConstants.HBASE_NAME_EVENT_LOGS, null, job);
+         TableMapReduceUtil.initTableReducerJob(EventLogConstants.HBASE_NAME_EVENT_LOGS, null, job);
+
         // 2. 本地运行，要求参数addDependencyJars为false
-        TableMapReduceUtil.initTableReducerJob(EventLogConstants.HBASE_NAME_EVENT_LOGS, null, job, null, null, null, null, false);
+//        TableMapReduceUtil.initTableReducerJob(EventLogConstants.HBASE_NAME_EVENT_LOGS, null, job, null, null, null, null, false);
         job.setNumReduceTasks(0);
 
         // 设置输入路径
@@ -78,8 +83,10 @@ public class AnalyserLogDataRunner implements Tool {
     }
 
     /**
-     * 处理参数
-     * 
+     * 处理日期参数，运行时 main方法传进来一个日期，代表要处理哪一天的日志数据，而且要求是这种格式传的： -d 2018-08-10 ,
+     * 这个方法会把这个日期参数设置到conf 配置信息中，如果没有获取到这个参数，默认会用昨天的日志来作为参数，
+     * 然后setJobInputPaths方法中会去取这个日期参数，根据这个参数，去读取对应的路径下的日志信息
+     *
      * @param conf
      * @param args
      */
@@ -103,6 +110,8 @@ public class AnalyserLogDataRunner implements Tool {
     }
 
     /**
+     * setJobInputPaths方法中会去取得main方法中设置的日期参数，根据这个参数，去读取对应的路径下的日志信息
+     *
      * 设置job的输入路径
      * 
      * @param job
@@ -113,6 +122,8 @@ public class AnalyserLogDataRunner implements Tool {
         try {
             fs = FileSystem.get(conf);
             String date = conf.get(GlobalConstants.RUNNING_DATE_PARAMES);
+
+            //这里先转化成long，再转换成String的原因是： main 传进来的格式是yyyy-MM-dd，而日志路径是：MM/dd/；
             Path inputPath = new Path("/logs/" + TimeUtil.parseLong2String(TimeUtil.parseString2Long(date), "MM/dd/"));
             if (fs.exists(inputPath)) {
                 FileInputFormat.addInputPath(job, inputPath);

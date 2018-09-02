@@ -12,7 +12,7 @@ public class GlobalConstants {
      */
     public static final int DAY_OF_MILLISECONDS = 86400000;
     /**
-     * 定义的运行时间变量名
+     * 定义的mr运行时间变量名
      */
     public static final String RUNNING_DATE_PARAMES = "RUNNING_DATE";
     /**

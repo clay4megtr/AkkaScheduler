@@ -33,7 +33,7 @@ public class IPSeekerExt extends IPSeeker {
 			String country = super.getCountry(ip);
 			if ("局域网".equals(country)) {
 			    info.setCountry("中国");
-			    info.setProvince("上海市");
+			    info.setProvince("北京市");
 			} else if (country != null && !country.trim().isEmpty()) {
 				// 表示该ip还一个可以解析的ip
 				country = country.trim();

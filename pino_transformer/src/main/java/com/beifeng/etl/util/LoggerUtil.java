@@ -23,6 +23,9 @@ public class LoggerUtil {
     private static IPSeekerExt ipSeekerExt = new IPSeekerExt();
 
     /**
+     * 会把请求参数中的？后面的useragent解析成，操作系统，浏览器内核等分开的，具体的内容
+     *  把日志格式的第一个^A分隔符前面的IP参数，解析成： 省，市，县等具体的内容，
+     *
      * 处理日志数据logText，返回处理结果map集合<br/>
      * 如果logText没有指定数据格式，那么直接返回empty的集合
      * 
@@ -74,8 +77,10 @@ public class LoggerUtil {
     }
 
     /**
+     * userAgent: 是放在？后面，在url上按照请求参数的方式传递过来的，
+     *
      * 处理浏览器的userAgent信息
-     * 
+     *
      * @param clientInfo
      */
     private static void handleUserAgent(Map<String, String> clientInfo) {
